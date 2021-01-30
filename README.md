@@ -1,0 +1,1 @@
+This repository provides a basic template for the course project on the WHO Covid-19 data (https://covid19.who.int/WHO-COVID-19-global-data.csv). The Covid-19 dataset in /Data is merely a backup in case the WHO data set is not accessible. Analysis should be done on the latest dataset from the WHO website.
