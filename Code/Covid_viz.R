@@ -62,13 +62,29 @@ fig.map
 # Q: Why is USA not shown in the map?
 # Check out:  setdiff(unique(covid.today$Country),unique(world$region))!
 
+## Spaghetti plot
+
+fig.spaghetti.1 <- covid %>% 
+  filter(Date_reported>= "2021-01-01", Date_reported<= "2021-01-28", WHO_region=="Africa") %>% 
+  mutate(Date=as.Date(Date_reported)) %>%
+  ggplot(aes(x=Date,y=New_cases,by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+fig.spaghetti.1   
+
+fig.spaghetti.2 <- covid %>% 
+  filter(Date_reported>= "2021-01-01", Date_reported<= "2021-01-28", WHO_region=="Africa") %>% 
+  mutate(Date=as.Date(Date_reported)) %>%
+  ggplot(aes(x=Date,y=New_deaths,by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+fig.spaghetti.2  
 
 ## Interactive plot ####
 library(plotly)
 covid %>% 
   filter(Date_reported>= "2021-01-01", Date_reported<= "2021-01-28") %>% 
-  group_by(Date_reported,WHO_region) %>% 
-  summarize(deaths = sum(New_deaths),
+  group_by(Date_reported,WHO_region) %>%   summarize(deaths = sum(New_deaths),
             cases = sum(New_cases)) %>% 
   mutate(Days_2021 = Date_reported- as.Date("2021-01-01")) %>%
   plot_ly(
