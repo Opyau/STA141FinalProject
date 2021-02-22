@@ -1,0 +1,66 @@
+---
+title: "Project 2 Description"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Overview
+
+This document contains instructions on Project 2 for STA 141A in Winter 2021. This document is made with `R markdown`. The `rmd` file to generate this document is available on the course website. 
+
+# Background
+
+
+
+## WHO COVID-19 data
+
+We will do an EDA for the WHO COVID-19 data. You can take a look at the [weekly WHO COVID-19 update](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/situation-reports) for reference.
+
+
+```{r echo=TRUE, eval=TRUE}
+library(tidyverse)
+covid <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+```
+
+This data set is maintained by WHO and updated constantly. The first task for you is to understand this data set, e.g., the meaning of the variables and their values. To this end, you can make use of your preferred search engine, or read the documentation for this data set. 
+
+In this project, you are a team of conscientious statisticians, who wish to help the general public understand the ongoing pandemic. 
+
+
+
+## Suggested outline 
+
+The following list provides one potential structure of the data analysis report. As this is the final project, the following suggestions are intended to provide one viable route for your project while leaving you as much freedom as possible. 
+
+***
+
+0. Before writing your analysis report, you may want to explore this data set and read about the coronavirus to generate the hypothesis or question to be answered in this report, i.e., the question(s) of interest. You can be creative on this question so long as it meets three conditions.
+
+    a. This question might be meaningful in real-world. 
+    b. A method discussed in this course is employed in solving this question. 
+    c. This question does not ask for causality.  
+
+***
+
+
+1. Introduce the dataset and the questions of interest. 
+
+2. Review the background of the coronavirus. 
+
+3. Explore this dataset and generate summary statistics that you find informative, and explain your findings. <span style="color:red"> The summary statistics should include at least time, number of cases, number of death, case-mortality rate.</span>
+
+4.  Propose an appropriate model to answer the questions of interest. 
+      a. Explain your notations. 
+      b. State assumptions for your model. 
+      c. Explain why your model is appropriate for this task. 
+
+
+5.  Fit the proposed model in (4) and explain your results. 
+
+6.  Conduct model diagnostics and/or sensitivity analysis. 
+
+7. Conclude your analysis with a discussion of your findings and caveats of your approach. 
+
+
+
+
