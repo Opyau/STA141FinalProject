@@ -1,0 +1,70 @@
+---
+title: "Data Explore"
+author: "Keith Mitchell"
+date: "3/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(plotly)
+
+```
+
+```{r}
+inner_data = read.csv('../Data/final_data_quarter_inner_join.csv')
+dim(inner_data)
+
+```
+
+
+```{r}
+head(inner_data)
+summary(inner_data)
+```
+
+
+```{r}
+inner_data$Date_reported = as.Date(inner_data$Date_reported, "%m/%d/%Y")
+inner_data$Date_reported = format(inner_data$Date_reported, "%Y-%m-%d")
+inner_data$GDP = as.numeric(gsub(",", ".", gsub("\\.", "", inner_data$GDP)))
+inner_data[is.na(inner_data)] = 0
+inner_data
+```
+
+
+```{r}
+p <- ggplot(inner_data, aes(x=Date_reported, y=New_cases_pc,color=Country)) +
+  geom_point() + 
+  xlab("")
+p
+```
+
+
+### Ideas on how to improve this
+- Create a moving average
+- Use the size factor somehow
+- Net change?
+- Not really handling the NA values well here. Lets just assume they are all 0 if NA
+- Seems we are missing some values for GDP??
+```{r}
+inner_data %>% #filter(inner_data$Date_reported < '2020-10-02') %>%
+  plot_ly(
+    x= ~New_cases_pc,
+    y= ~GDP,
+    frame = ~Date_reported,
+    text=~Country,
+    hoverinfo="Country",
+    color=~Country,
+    type = 'scatter',
+    mode = 'markers+text',
+    showlegend = T
+  )
+
+```
+
+- Talk to group about missing GDP values and figure out if taking these values after the quarter date or prior to the quarter date
+
