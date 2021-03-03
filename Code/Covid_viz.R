@@ -11,7 +11,13 @@ write_csv(covid,file="../Data/WHO-Covid-19-backup.csv")
 
 covid <- covid %>% 
   filter(WHO_region != "Other") %>% 
-  mutate(WHO_region = fct_recode(WHO_region,                            "Eastern Mediterranean"="EMRO","Europe" = "EURO","Africa" = "AFRO","Western Pacific" = "WPRO","Americas"="AMRO","South-East Asia" = "SEARO"))
+  mutate(WHO_region = fct_recode(WHO_region,
+                                 "Eastern Mediterranean"="EMRO",
+                                 "Europe" = "EURO",
+                                 "Africa" = "AFRO",
+                                 "Western Pacific" = "WPRO",
+                                 "Americas"="AMRO",
+                                 "South-East Asia" = "SEARO"))
 
 range(covid$Date_reported)
 length(unique(covid$Country))
@@ -98,3 +104,4 @@ covid %>%
     mode = 'markers',
     showlegend = T
   )
+
