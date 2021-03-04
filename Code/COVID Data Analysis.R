@@ -2,6 +2,7 @@ setwd("../Data/Matched Data")
 library(tidyverse)
 library(lubridate)
 library(plotly)
+library(ggplot2)
 covid <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
 Country_GDP = read_csv("OECD Populations matched.csv")
 countries = Country_GDP$Country
@@ -30,6 +31,9 @@ Ave_Summary = covid %>% group_by(Country, fiscal_quarter) %>%
             Ave_NewDeath = mean(New_deaths),
   ) 
 
+
+
+
 Ave_Summary$CasePercent_Change = NA
 Ave_Summary$DeathPercent_Change = NA
 
@@ -40,6 +44,29 @@ for(i in c(0:50)){
   }
 }
 
+figure1 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = Ave_NewDeath, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure1
+
+figure2 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = Ave_NewCase, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure2
+
+figure3 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = CasePercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure3
+
+figure4 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = DeathPercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure4
 
 
 Ave_Summary %>% plot_ly(
@@ -71,6 +98,31 @@ for(i in c(0:50)){
   }
 }
 
+figure5 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = Cumul_Case, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure5
+
+figure6 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = Cumul_Death, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure6
+
+figure7 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = CasePercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure7
+
+figure8 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(fiscal_quarter), y = DeathPercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+figure8
+
+
 Cumul_Summary %>%
   plot_ly(
     x= ~Cumul_Case,
@@ -84,3 +136,9 @@ Cumul_Summary %>%
     showlegend = T
   ) 
 
+
+#Boxplots
+ggplot(Ave_Summary, aes(x = fiscal_quarter, y = Ave_NewCase)) + geom_boxplot()
+ggplot(Ave_Summary, aes(x = fiscal_quarter, y = Ave_NewDeath)) + geom_boxplot()
+ggplot(Cumul_Summary, aes(x = fiscal_quarter, y = Cumul_Case)) + geom_boxplot()
+ggplot(Cumul_Summary, aes(x = fiscal_quarter, y = Cumul_Death)) + geom_boxplot()
