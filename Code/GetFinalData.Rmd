@@ -103,15 +103,21 @@ head(unemp_data)
 ###
 
 ```{r}
+dim(gdpcovid_quarter)
+dim(unemp_data)
+
 unempgdpcovid_quarter = merge(x = unemp_data, y = gdpcovid_quarter, by = c("Quarter", "Country"), all=TRUE)#, all.x = TRUE)
 unempgdpcovid_quarter_cleaned = merge(x = unemp_data, y = gdpcovid_quarter, by = c("Quarter", "Country"))
 dim(unempgdpcovid_quarter)
 dim(unempgdpcovid_quarter_cleaned)
+
+unempgdpcovid_quarter
+unempgdpcovid_quarter_cleaned
 ```
 
 ```{r}
 write.csv(unempgdpcovid_quarter, '../Data/final_data_quarter_outer_join.csv')
-write.csv(unempgdpcovid_quarter_cleaned, '../Data/final_data_quarter_inner_join.csv')
+write.csv(unempgdpcovid_quarter_cleaned, '../Data/final_data_quarter_inner_join.csv')'
 ```
 
 

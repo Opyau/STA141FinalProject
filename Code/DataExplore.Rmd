@@ -11,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(plotly)
-
 ```
 
 ```{r}
@@ -22,7 +21,6 @@ dim(inner_data)
 
 
 ```{r}
-head(inner_data)
 summary(inner_data)
 ```
 
@@ -31,8 +29,8 @@ summary(inner_data)
 inner_data$Date_reported = as.Date(inner_data$Date_reported, "%m/%d/%Y")
 inner_data$Date_reported = format(inner_data$Date_reported, "%Y-%m-%d")
 inner_data$GDP = as.numeric(gsub(",", ".", gsub("\\.", "", inner_data$GDP)))
-inner_data[is.na(inner_data)] = 0
-inner_data
+#inner_data[is.na(inner_data)] = 0
+head(inner_data)
 ```
 
 
@@ -50,6 +48,7 @@ p
 - Net change?
 - Not really handling the NA values well here. Lets just assume they are all 0 if NA
 - Seems we are missing some values for GDP??
+- Need to fix the `Value` column to be more helfully labeled like `Unemployment` also what is this measured in.
 ```{r}
 inner_data %>% #filter(inner_data$Date_reported < '2020-10-02') %>%
   plot_ly(
@@ -66,5 +65,33 @@ inner_data %>% #filter(inner_data$Date_reported < '2020-10-02') %>%
 
 ```
 
-- Talk to group about missing GDP values and figure out if taking these values after the quarter date or prior to the quarter date
 
+```{r}
+inner_data %>% #filter(inner_data$Date_reported < '2020-10-02') %>%
+  plot_ly(
+    x= ~New_cases_pc,
+    y= ~Value,
+    frame = ~Date_reported,
+    text=~Country,
+    hoverinfo="Country",
+    color=~Country,
+    type = 'scatter',
+    mode = 'text',
+    showlegend = T
+  )
+```
+
+
+
+
+- Talk to group about missing GDP values and figure out if taking these values after the quarter date or prior to the quarter date
+- Also are the variables like `New Cases pc` are from the CovidCasesQuarterly so this should be ok. Unemp was monthly so we need to know what this value means.
+
+
+
+Lets plot the number of new cases vs the unemp value (change?)
+```{r}
+# First Quarter Data
+inner_data %>% filter(Date_reported<'2)
+plot(inner_data$)
+```
