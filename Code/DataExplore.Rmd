@@ -92,6 +92,19 @@ inner_data %>% #filter(inner_data$Date_reported < '2020-10-02') %>%
 Lets plot the number of new cases vs the unemp value (change?)
 ```{r}
 # First Quarter Data
-inner_data %>% filter(Date_reported<'2)
-plot(inner_data$)
+#inner_data %>% filter(Date_reported<'2)
+#plot(inner_data$)
 ```
+
+
+
+
+```{r}
+new_data = read.csv('../Data/final_data_quarter_inner_join2.csv')
+head(new_data)
+plot(new_data$X.unem..QTR., new_data$Unemployment)
+
+
+```
+
+

@@ -1,0 +1,62 @@
+---
+title: "ModelExplore"
+author: "Keith Mitchell"
+date: "3/5/2021"
+output: html_document
+---
+
+
+```{r}
+library(ggplot2)
+library(MASS)
+library(tidyverse)
+library(kableExtra)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### First lets look at the data of interest:
+```{r}
+inner_data = read.csv("../Data/final_data_quarter_inner_join3.csv")
+head(inner_data)# %>% kable %>% kable_styling()
+inner_data$X.unem..TOTAL.[is.na(inner_data$X.unem..TOTAL.)] <- 0
+inner_data$X.GDP..TOTAL.[is.na(inner_data$X.GDP..TOTAL.)] <- 0
+
+```
+
+
+```{r}
+#Final model to share with group
+model11 = lm(X.unem..TOTAL. ~ New_cases_pc + Country, data=inner_data)
+
+modsum = summary(model11)
+as.data.frame(modsum[4]$coefficients) %>% kable %>% kable_styling()
+```
+
+
+```{r}
+#Final model to share with group
+model11 = lm(X.unem..TOTAL. ~ New_cases_pc, data=inner_data)
+
+modsum = summary(model11)
+as.data.frame(modsum[4]$coefficients) %>% kable %>% kable_styling()
+```
+
+
+
+```{r}
+#Final model to share with group
+model11 = lm(X.GDP..TOTAL. ~ New_cases_pc + Country, data=inner_data)
+
+modsum = summary(model11)
+as.data.frame(modsum[4]$coefficients) %>% kable %>% kable_styling()
+```
+```{r}
+#Final model to share with group
+model11 = lm(X.GDP..TOTAL. ~ New_cases_pc, data=inner_data)
+
+modsum = summary(model11)
+as.data.frame(modsum[4]$coefficients) %>% kable %>% kable_styling()
+```
