@@ -3,6 +3,7 @@ library(tidyverse)
 library(lubridate)
 library(plotly)
 library(ggplot2)
+library(ggpubr)
 covid <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
 Country_GDP = read_csv("OECD Populations matched.csv")
 countries = Country_GDP$Country
@@ -11,22 +12,22 @@ countries = Country_GDP$Country
 covid = covid %>% filter(Date_reported <= as.Date("2020-12-31")) %>%
   filter(Country %in% countries)
 
-covid$fiscal_quarter = quarter(covid$Date_reported, with_year = TRUE, fiscal_start = 1)
+covid$Date_reported = quarter(covid$Date_reported, with_year = TRUE, fiscal_start = 1)
 
 for(i in c(1: dim(covid)[1])){
-  if(covid$fiscal_quarter[i] == 2020.1)
-    covid$fiscal_quarter[i] = "2020-01-03"
-  else if(covid$fiscal_quarter[i] == 2020.2)
-    covid$fiscal_quarter[i] = "2020-04-03"
-  else if(covid$fiscal_quarter[i] == 2020.3)
-    covid$fiscal_quarter[i] = "2020-07-03"
-  else if(covid$fiscal_quarter[i] == 2020.4)
-    covid$fiscal_quarter[i] = "2020-10-03"
+  if(covid$Date_reported[i] == 2020.1)
+    covid$Date_reported[i] = "1/3/2020"
+  else if(covid$Date_reported[i] == 2020.2)
+    covid$Date_reported[i] = "4/3/2020"
+  else if(covid$Date_reported[i] == 2020.3)
+    covid$Date_reported[i] = "7/3/2020"
+  else if(covid$Date_reported[i] == 2020.4)
+    covid$Date_reported[i] = "10/3/2020"
   
 }
 
 
-Ave_Summary = covid %>% group_by(Country, fiscal_quarter) %>%
+Ave_Summary = covid %>% group_by(Country, Date_reported) %>%
   summarize(Ave_NewCase = mean(New_cases),
             Ave_NewDeath = mean(New_deaths),
   ) 
@@ -45,25 +46,25 @@ for(i in c(0:50)){
 }
 
 figure1 = Ave_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = Ave_NewDeath, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = Ave_NewDeath, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure1
 
 figure2 = Ave_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = Ave_NewCase, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = Ave_NewCase, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure2
 
 figure3 = Ave_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = CasePercent_Change, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = CasePercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure3
 
 figure4 = Ave_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = DeathPercent_Change, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = DeathPercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure4
@@ -72,7 +73,7 @@ figure4
 Ave_Summary %>% plot_ly(
   x= ~Ave_NewCase,
   y= ~Ave_NewDeath,
-  frame = ~fiscal_quarter,
+  frame = ~Date_reported,
   text=~Country,
   hoverinfo="Country",
   color=~Country,
@@ -82,7 +83,7 @@ Ave_Summary %>% plot_ly(
 ) 
 
 
-Cumul_Summary = covid %>% group_by(Country, fiscal_quarter) %>%
+Cumul_Summary = covid %>% group_by(Country, Date_reported) %>%
   summarize(Cumul_Case = sum(New_cases),
             Cumul_Death = sum(New_deaths)
   )
@@ -99,25 +100,25 @@ for(i in c(0:50)){
 }
 
 figure5 = Cumul_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = Cumul_Case, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = Cumul_Case, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure5
 
 figure6 = Cumul_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = Cumul_Death, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = Cumul_Death, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure6
 
 figure7 = Cumul_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = CasePercent_Change, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = CasePercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure7
 
 figure8 = Cumul_Summary %>%
-  ggplot(aes(x=as.Date(fiscal_quarter), y = DeathPercent_Change, by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = DeathPercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 figure8
@@ -127,7 +128,7 @@ Cumul_Summary %>%
   plot_ly(
     x= ~Cumul_Case,
     y= ~Cumul_Death,
-    frame = ~fiscal_quarter,
+    frame = ~Date_reported,
     text=~Country,
     hoverinfo="Country",
     color=~Country,
@@ -138,7 +139,12 @@ Cumul_Summary %>%
 
 
 #Boxplots
-ggplot(Ave_Summary, aes(x = fiscal_quarter, y = Ave_NewCase)) + geom_boxplot()
-ggplot(Ave_Summary, aes(x = fiscal_quarter, y = Ave_NewDeath)) + geom_boxplot()
-ggplot(Cumul_Summary, aes(x = fiscal_quarter, y = Cumul_Case)) + geom_boxplot()
-ggplot(Cumul_Summary, aes(x = fiscal_quarter, y = Cumul_Death)) + geom_boxplot()
+figure9 = ggplot(Ave_Summary, aes(x = Date_reported, y = log(Ave_NewCase))) + geom_boxplot()
+figure10 = ggplot(Ave_Summary, aes(x = Date_reported, y = log(Ave_NewDeath))) + geom_boxplot()
+figure11 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Case))) + geom_boxplot()
+figure12 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Death))) + geom_boxplot()
+
+
+covid_data = read.csv("../final_data_quarter_inner_join2.csv")
+mergedSummary = merge(x = Ave_Summary, y = Cumul_Summary, by = c("Country", "Date_reported"))
+finalMerge = merge(x = mergedSummary, y = covid_data, by = c("Country", "Date_reported"))
