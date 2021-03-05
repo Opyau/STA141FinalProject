@@ -1,30 +1,10 @@
 ---
 title: "Project 2 Description"
+author: "Team 15: Samuel Moskovic, William Khouri, Keith Mitchell, Oliver Yau"
 date: "`r Sys.Date()`"
 output: html_document
 ---
 
-## Overview
-
-This document contains instructions on Project 2 for STA 141A in Winter 2021. This document is made with `R markdown`. The `rmd` file to generate this document is available on the course website. 
-
-# Background
-
-
-
-## WHO COVID-19 data
-
-We will do an EDA for the WHO COVID-19 data. You can take a look at the [weekly WHO COVID-19 update](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/situation-reports) for reference.
-
-
-```{r echo=TRUE, eval=TRUE, warning = FALSE}
-library(tidyverse)
-covid <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
-```
-
-This data set is maintained by WHO and updated constantly. The first task for you is to understand this data set, e.g., the meaning of the variables and their values. To this end, you can make use of your preferred search engine, or read the documentation for this data set. 
-
-In this project, you are a team of conscientious statisticians, who wish to help the general public understand the ongoing pandemic. 
 
 
 
@@ -53,7 +33,21 @@ In early 2020, an outbreak of the coronavirus known as COVID-19 spread from Chin
 
 
 # Descirptive Anaylsis
-We first analyze the initial WHO dataset to get a sense of the trends of data per fiscal quarter, which we define to be a three month period with the first day of the first quarter being January 3, 2020 (So then the subsequent quarters will be 3 months apart and also start on the 3rd). We first take the data set from the WHO and filter out the dates that were not a part of the past year. In other words, these are the dates between 1/3/2020 and 12/31/2020. Then we create a new column called `Date_reported` which lists the start of the fiscal quarter that we described earlier. We show the data set below:
+The WHO provides a COVID-19 dataset which provides information on the number of COVID-19 cases a country has, updated daily. Here is the initial data:
+
+```{r include = FALSE}
+library(tidyverse)
+```
+
+```{r echo=TRUE, eval=TRUE, warning = FALSE}
+covid <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+head(covid)
+```
+
+At the time of writing, this dataset contains 101,436 observations with 8 variables, which are `Date_reported`, `Country_code`, `Country`, `WHO_region`, `New_cases`, `Cumulative_cases`, `New_deaths`, and `Cumulataive_deaths`. The first four variables are categorical, and are used to classify/categorize days and regions together. The last four variables show what we are measuring: the number of cases and deaths each country has.
+
+
+We first analyze the initial WHO dataset to get a sense of the trends of data per fiscal quarter, which we define to be a three month period with the first day of the first quarter being January 3, 2020 (So then the subsequent quarters will be 3 months apart and also start on the 3rd). We first take the data set from the WHO and filter out the dates that were not a part of the past year. In other words, these are the dates between 1/3/2020 and 12/31/2020. Then modify `Date_reported` to a list that details the start of the fiscal quarter we described earlier. We show the data set below:
 
 ```{r include=FALSE}
 setwd("../Data/Matched Data")
@@ -61,7 +55,6 @@ library(lubridate)
 library(plotly)
 library(ggplot2)
 library(ggpubr)
-covid <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
 Country_GDP = read_csv("OECD Populations matched.csv")
 countries = Country_GDP$Country
 
