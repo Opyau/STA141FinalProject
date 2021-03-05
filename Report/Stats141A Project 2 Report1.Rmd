@@ -1,0 +1,284 @@
+---
+title: "An Analysis on Global Economic Health During the COVID-19 Pandemic"
+author: "Team 15: Samuel Moskovic, William Khouri, Keith Mitchell, Oliver Yau"
+date: "`r Sys.Date()`"
+output: html_document
+# Github link:[STA141AFinalProject Repository](https://github.com/Opyau/STA141FinalProject)
+---
+
+
+
+
+## Suggested outline 
+
+The following list provides one potential structure of the data analysis report. As this is the final project, the following suggestions are intended to provide one viable route for your project while leaving you as much freedom as possible. 
+
+***
+
+0. Before writing your analysis report, you may want to explore this data set and read about the coronavirus to generate the hypothesis or question to be answered in this report, i.e., the question(s) of interest. You can be creative on this question so long as it meets three conditions.
+
+    a. This question might be meaningful in real-world. 
+    b. A method discussed in this course is employed in solving this question. 
+    c. This question does not ask for causality.  
+
+***
+
+
+
+# Abstract
+In this Exploratory Data Analysis of the World Health Organization (WHO) COVID-19 database, we determine the impact of COVID-19 on global economic health. We consider many factors in this analysis such as unemployment rates, energy prices, Gross Domestic Product (GDP), and other such criteria to get a sense of how economies progress as the disease travels through the population. 
+
+
+# Introduction
+In early 2020, an outbreak of the coronavirus known as COVID-19 spread from China impacting people all over the world. The initial outbreak caused many countries to immediately go into lockdown and citizens were required to stay at home to quarantine as a means to contain the spread of the virus. As a result, countries were producing goods in lower quantities and thus GDP went down. The purpose of this analysis is to visualize how global economies responded to COVID-19 over time. Furthermore, if such a pandemic ever occurs in the future, we may be able to predict how each country will be impacted and come up with a solution where the economy will not suffer as much.
+
+
+# Descriptive Anaylsis
+The WHO provides a COVID-19 dataset which provides information on the number of COVID-19 cases a country has, updated daily. Here is the initial data:
+
+```{r include = FALSE}
+library(tidyverse)
+```
+
+```{r echo=TRUE, eval=TRUE, warning = FALSE}
+covid <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+head(covid)
+```
+
+At the time of writing, this dataset contains 101,436 observations with 8 variables, which are `Date_reported`, `Country_code`, `Country`, `WHO_region`, `New_cases`, `Cumulative_cases`, `New_deaths`, and `Cumulataive_deaths`. The first four variables are categorical, and are used to classify/categorize days and regions together. The last four variables show what we are measuring: the number of cases and deaths each country has.
+
+
+We first analyze the initial WHO dataset to get a sense of the trends of data per fiscal quarter, which we define to be a three month period with the first day of the first quarter being January 3, 2020 (So then the subsequent quarters will be 3 months apart and also start on the 3rd). We first take the data set from the WHO and filter out the dates that were not a part of the past year. In other words, these are the dates between 1/3/2020 and 12/31/2020. Then modify `Date_reported` to a list that details the start of the fiscal quarter we described earlier. We show the data set below:
+
+```{r "setup", include=FALSE}
+knitr::opts_knit$set(root.dir = ("../Data/Matched Data"))  # with something else than `getwd()`
+
+
+```
+
+```{r include=FALSE}
+
+library(lubridate)
+library(plotly)
+library(ggplot2)
+library(ggpubr)
+Country_GDP = read_csv("OECD Populations matched.csv")
+countries = Country_GDP$Country
+
+
+covid = covid %>% filter(Date_reported <= as.Date("2020-12-31")) %>%
+  filter(Country %in% countries)
+
+covid$Date_reported = quarter(covid$Date_reported, with_year = TRUE, fiscal_start = 1)
+
+for(i in c(1: dim(covid)[1])){
+  if(covid$Date_reported[i] == 2020.1)
+    covid$Date_reported[i] = "1/3/2020"
+  else if(covid$Date_reported[i] == 2020.2)
+    covid$Date_reported[i] = "4/3/2020"
+  else if(covid$Date_reported[i] == 2020.3)
+    covid$Date_reported[i] = "7/3/2020"
+  else if(covid$Date_reported[i] == 2020.4)
+    covid$Date_reported[i] = "10/3/2020"
+  
+}
+```
+
+```{r}
+head(covid)
+```
+
+```{r include = FALSE}
+Ave_Summary = covid %>% group_by(Country, Date_reported) %>%
+  summarize(Ave_NewCase = mean(New_cases),
+            Ave_NewDeath = mean(New_deaths),
+  ) 
+```
+
+
+We wish to see the average number of cases/deaths per day from COVID-19 per quarter. We group by the country and the quarter to do so. Furthermore, we are interested in seeing the percent change of cases/deaths after the preceding quarter. The following code demonstrates this process.
+
+```{r echo = TRUE, include = TRUE, warning = FALSE}
+Ave_Summary$CasePercent_Change = NA
+Ave_Summary$DeathPercent_Change = NA
+
+for(i in c(0:50)){
+ for(j in c(1: 3)){
+  Ave_Summary$CasePercent_Change[4*i+j+1] = abs(Ave_Summary$Ave_NewCase[4*i+j] - Ave_Summary$Ave_NewCase[4*i+j + 1])/Ave_Summary$Ave_NewCase[4*i+j]
+  Ave_Summary$DeathPercent_Change[4*i+j+1] = abs(Ave_Summary$Ave_NewDeath[4*i+j] - Ave_Summary$Ave_NewDeath[4*i+j + 1])/Ave_Summary$Ave_NewDeath[4*i+j]
+  }
+}
+```
+
+
+
+And now we plot the time series of these plots below. Note that we used a logarithmic scale for the raw number of deaths and cases.
+
+```{r echo = TRUE, include = TRUE, warning = FALSE}
+figure1 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = log(Ave_NewDeath), by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+figure2 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = log(Ave_NewCase), by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+figure3 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = CasePercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+figure4 = Ave_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = DeathPercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+ggarrange(figure1, figure2, figure3, figure4)
+
+```
+
+For better visualization of the progression of the disease for these countries, we have an interactive plot which you can slide to see the number of new deaths over new cases using the raw numbers.
+
+```{r echo = TRUE, include = TRUE, warning = FALSE}
+Ave_Summary %>% plot_ly(
+  x= ~Ave_NewCase,
+  y= ~Ave_NewDeath,
+  frame = ~Date_reported,
+  text=~Country,
+  hoverinfo="Country",
+  color=~Country,
+  type = 'scatter',
+  mode = 'markers',
+  showlegend = T
+) 
+```
+
+We showed earlier the graphs for the average number of cases and deaths. Another way to visualize the data is to view for the cumulative number of cases/deaths in the fiscal quarter.
+
+```{r echo = TRUE, include = TRUE, warning = FALSE}
+Cumul_Summary = covid %>% group_by(Country, Date_reported) %>%
+  summarize(Cumul_Case = sum(New_cases),
+            Cumul_Death = sum(New_deaths)
+  )
+
+
+Cumul_Summary$CasePercent_Change = NA
+Cumul_Summary$DeathPercent_Change = NA
+
+for(i in c(0:50)){
+  for(j in c(1: 3)){
+    Cumul_Summary$CasePercent_Change[4*i+j+1] = abs(Cumul_Summary$Cumul_Case[4*i+j] - Cumul_Summary$Cumul_Case[4*i+j + 1])/Cumul_Summary$Cumul_Case[4*i+j]
+    Cumul_Summary$DeathPercent_Change[4*i+j+1] = abs(Cumul_Summary$Cumul_Death[4*i+j] - Cumul_Summary$Cumul_Death[4*i+j + 1])/Cumul_Summary$Cumul_Death[4*i+j]
+  }
+}
+
+```
+
+Now we plot the time series similar to earlier.
+
+```{r echo = TRUE, include = TRUE, warning = FALSE}
+figure5 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = log(Cumul_Death), by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+
+figure6 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = log(Cumul_Case), by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+
+figure7 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = CasePercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+
+figure8 = Cumul_Summary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = DeathPercent_Change, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+
+ggarrange(figure5, figure6, figure7, figure8)
+```
+
+And below we have the interactive plot similar to above but for the cumulative deaths over cases.
+
+```{r echo = TRUE, include = TRUE, warning = FALSE}
+Cumul_Summary %>%
+  plot_ly(
+    x= ~Cumul_Case,
+    y= ~Cumul_Death,
+    frame = ~Date_reported,
+    text=~Country,
+    hoverinfo="Country",
+    color=~Country,
+    type = 'scatter',
+    mode = 'markers',
+    showlegend = T
+  ) 
+```
+
+Notice how the time series for Average Cases and Cumulative Cases are similar in shape, but with different scalings. We can say the same for Average Deaths and Cumulative Deaths. Perhaps there is a relation between the average number of COVID-19 cases/deaths with the total number for the fiscal quarter. Further analysis can explain why this is the case.
+
+```{r}
+ggarrange(figure1, figure5)
+ggarrange(figure2, figure6)
+```
+
+Another way to visualize this data is given by boxplots using a logarithmic scale. We display the data below:
+
+```{r echo = TRUE, include=TRUE, warning = FALSE}
+figure9 = ggplot(Ave_Summary, aes(x = Date_reported, y = log(Ave_NewCase))) + geom_boxplot()
+figure10 = ggplot(Ave_Summary, aes(x = Date_reported, y = log(Ave_NewDeath))) + geom_boxplot()
+figure11 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Case))) + geom_boxplot()
+figure12 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Death))) + geom_boxplot()
+
+ggarrange(figure9, figure10, figure11, figure12)
+
+```
+
+The nature of these plots are consistent with the relationships we discussed earlier.
+
+Our model will be measuring the effect of a nation's COVID cases on national GDP.  The variables used will be quarterly GDP change, and COVID-19 cases per capita.
+
+
+```{r}
+data1 <- read_csv("../final_data_quarter_inner_join3.csv")
+GDPQTR <- unlist(data1[34])
+casespc <- unlist(data1[30])
+plot( GDPQTR ~ casespc)
+
+```
+
+What we can immediately observe is that various countries have randomly distrubuted starting points of GDP growth/contraction (mean near zero) when cases are zero.  This will make finding an intercept more difficult.
+However, we can observe a rising trend of GDP growth as cases rise.  Higher GDP is obviously not a causal effect of increased COVID cases, but there could still be significant correlation. 
+
+```{r}
+reg18 <- lm( GDPQTR ~ casespc)
+summary(reg18)
+
+```
+
+Our regression shows the coefficient for Cases per capita has a positive correlation with percent change in GDP, to a significance of < .001
+GDP appears to grow alongside COVID cases, possibly due to the dramatic drop in GDP at the start of the pandemic, resulting in GDP recovering while Covid cases continue to rise.
+In addition, quarentines may have created new demand for consumer goods, while government economic stimulus kept consumer spending high.
+The R-squared value is low, .0967
+
+```{r}
+
+plot(reg18)
+
+```
+
+
+The residuals vs fitted graph is problematic, we have non-constant variance and nonlinearity, which suggests changes to our model might be neccesary.
+
+Our data is normally distrubuted
+
+The scale-location plot also is showing some issues, the magnitude of our residuals have too much variance.
+
