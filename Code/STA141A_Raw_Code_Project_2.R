@@ -14,7 +14,6 @@ confint(model11)
 
 
 
-
 inner_data$Date_reported = as.Date(inner_data$Date_reported, "%m/%d/%Y")
 inner_data$Date_reported = format(inner_data$Date_reported, "%Y-%m-%d")
 inner_data$GDP = as.numeric(gsub(",", ".", gsub("\\.", "", inner_data$GDP)))
@@ -47,6 +46,8 @@ model2$coefficients
 
 model3 = lm(inner_data2$`%GDP (QTR)` ~ inner_data2$Cumulative_deaths, inner_data2)
 model3$coefficients 
+
+
 
 model4 = lm(inner_data2$`%GDP (QTR)` ~ inner_data2$New_cases, inner_data2)
 model4$coefficients 
@@ -103,10 +104,27 @@ is.na(inner_data2$Cumulative_cases_pc) = sapply(inner_data2$Cumulative_cases_pc,
 
 confint(model9) 
 
+
 summary(model6)
 
 
 summary.lm(model6)
 
+dog4 = log(inner_data3$Ave_NewCase)
+dog4
+
+# New Model Selection 
+
+inner_data3 = read.csv("/Users/willkhouri/STA_Analysis/STA141FinalProject/Data/final_data_quarter_inner_join3.csv")
+
+
+model13 = lm(inner_data3$X.GDP..QTR. ~ dog4 + inner_data3$Country, inner_data3)
+summary(model13) 
+
+
+
+
+
+  
 
 
