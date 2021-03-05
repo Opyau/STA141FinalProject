@@ -49,25 +49,23 @@ figure1 = Ave_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = Ave_NewDeath, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure1
 
 figure2 = Ave_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = Ave_NewCase, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure2
 
 figure3 = Ave_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = CasePercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure3
 
 figure4 = Ave_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = DeathPercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure4
+
+ggarrange(figure1, figure2, figure3, figure4)
 
 
 Ave_Summary %>% plot_ly(
@@ -103,25 +101,27 @@ figure5 = Cumul_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = Cumul_Case, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure5
+
 
 figure6 = Cumul_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = Cumul_Death, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure6
+
 
 figure7 = Cumul_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = CasePercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure7
+
 
 figure8 = Cumul_Summary %>%
   ggplot(aes(x=as.Date(Date_reported), y = DeathPercent_Change, by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
-figure8
+
+
+ggarrange(figure5, figure6, figure7, figure8)
 
 
 Cumul_Summary %>%
@@ -144,7 +144,12 @@ figure10 = ggplot(Ave_Summary, aes(x = Date_reported, y = log(Ave_NewDeath))) + 
 figure11 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Case))) + geom_boxplot()
 figure12 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Death))) + geom_boxplot()
 
+ggarrange(figure9, figure10, figure11, figure12)
+
+
 
 covid_data = read.csv("../final_data_quarter_inner_join2.csv")
 mergedSummary = merge(x = Ave_Summary, y = Cumul_Summary, by = c("Country", "Date_reported"))
 finalMerge = merge(x = mergedSummary, y = covid_data, by = c("Country", "Date_reported"))
+
+write.csv(finalMerge, '../final_data_quarter_inner_join3.csv')
