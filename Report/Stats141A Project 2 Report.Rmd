@@ -173,13 +173,13 @@ Now we plot the time series similar to earlier.
 
 ```{r echo = TRUE, include = TRUE, warning = FALSE}
 figure5 = Cumul_Summary %>%
-  ggplot(aes(x=as.Date(Date_reported), y = log(Cumul_Case), by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = log(Cumul_Death), by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 
 
 figure6 = Cumul_Summary %>%
-  ggplot(aes(x=as.Date(Date_reported), y = (Cumul_Death), by=Country)) +
+  ggplot(aes(x=as.Date(Date_reported), y = log(Cumul_Case), by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 
@@ -216,7 +216,12 @@ Cumul_Summary %>%
   ) 
 ```
 
-Notice how the time series for Average Cases and Cumulative Cases are similar. We can say the same for Average Deaths and Cumulative Deaths. Perhaps there is a relation between the average number of COVID-19 cases/deaths with the total number for the fiscal quarter. Further analysis can explain why this is the case.
+Notice how the time series for Average Cases and Cumulative Cases are similar in shape, but with different scalings. We can say the same for Average Deaths and Cumulative Deaths. Perhaps there is a relation between the average number of COVID-19 cases/deaths with the total number for the fiscal quarter. Further analysis can explain why this is the case.
+
+```{r}
+ggarrange(figure1, figure5)
+ggarrange(figure2, figure6)
+```
 
 Another way to visualize this data is given by boxplots using a logarithmic scale. We display the data below:
 
@@ -229,6 +234,8 @@ figure12 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Death))) +
 ggarrange(figure9, figure10, figure11, figure12)
 
 ```
+
+The nature of these plots are consistent with the relationships we discussed earlier.
 
 
 4.  Propose an appropriate model to answer the questions of interest. 
