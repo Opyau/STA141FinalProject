@@ -1,5 +1,5 @@
 ---
-title: "Project 2 Description"
+title: "An Analysis on Global Economic Health During the COVID-19 Pandemic"
 author: "Team 15: Samuel Moskovic, William Khouri, Keith Mitchell, Oliver Yau"
 date: "`r Sys.Date()`"
 output: html_document
@@ -225,7 +225,7 @@ ggarrange(figure2, figure6)
 
 Another way to visualize this data is given by boxplots using a logarithmic scale. We display the data below:
 
-```{r echo = TRUE, include=TRUE}
+```{r echo = TRUE, include=TRUE, warning = FALSE}
 figure9 = ggplot(Ave_Summary, aes(x = Date_reported, y = log(Ave_NewCase))) + geom_boxplot()
 figure10 = ggplot(Ave_Summary, aes(x = Date_reported, y = log(Ave_NewDeath))) + geom_boxplot()
 figure11 = ggplot(Cumul_Summary, aes(x = Date_reported, y = log(Cumul_Case))) + geom_boxplot()
