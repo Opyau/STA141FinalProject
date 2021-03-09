@@ -153,3 +153,39 @@ mergedSummary = merge(x = Ave_Summary, y = Cumul_Summary, by = c("Country", "Dat
 finalMerge = merge(x = mergedSummary, y = covid_data, by = c("Country", "Date_reported"))
 
 write.csv(finalMerge, '../final_data_quarter_inner_join3.csv')
+
+
+data = read.csv("../final_data_quarter_inner_join3.csv")
+gdpsummary = data %>% select(Country, Date_reported, GDP, X.GDP..QTR.)
+gdpsummary$GDP = as.numeric(gsub(",","",gdpsummary$GDP))
+
+figure13 = gdpsummary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = log(GDP), by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+figure13
+
+figure14 = gdpsummary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = X.GDP..QTR., by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+figure14
+
+unempsummary = data %>% select(Country, Date_reported, Unemployment, X.unem..QTR.)
+
+
+figure15 = unempsummary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = Unemployment, by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+figure15
+
+figure16 = unempsummary %>%
+  ggplot(aes(x=as.Date(Date_reported), y = X.unem..QTR., by=Country)) +
+  geom_line(aes(color=Country)) +
+  theme(legend.position ='none')
+
+figure16
