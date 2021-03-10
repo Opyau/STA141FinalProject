@@ -21,12 +21,12 @@ library(kableExtra)
 ### First lets look at the data of interest:
 ```{r}
 inner_data = read.csv("../Data/final_data_quarter_inner_join3.csv")
-inner_data$X.unem..TOTAL.[is.na(inner_data$X.unem..TOTAL.)] <- 0
-inner_data$X.GDP..TOTAL.[is.na(inner_data$X.GDP..TOTAL.)] <- 0
+#inner_data$X.unem..TOTAL.[is.na(inner_data$X.unem..TOTAL.)] <- 0
+#inner_data$X.GDP..TOTAL.[is.na(inner_data$X.GDP..TOTAL.)] <- 0
 
-#inner_data = inner_data %>% filter(!is.na(X.unem..TOTAL.)) %>% filter(!is.na(X.GDP..TOTAL.))
+inner_data = inner_data %>% filter(!is.na(X.unem..TOTAL.)) %>% filter(!is.na(X.GDP..TOTAL.))
 
-#inner_data #%>% kable %>% kable_styling()
+inner_data #%>% kable %>% kable_styling()
 #dim(inner_data)
 ```
 
@@ -89,5 +89,5 @@ plot(model11)
 ```
 
 
-# Box cox procedure was considering but would require a shift in the response variable (GDP and umep total) which would potentially hurt the analysis thus far. Lets try to remove zero values and see if that return nicer QQ plots. 
+# Box cox procedure was considering but would require a shift in the response variable (GDP and umep total) which would potentially hurt the analysis thus far. Lets try to remove zero values and see if that return nicer QQ plots since these NAs were replaced with 0s.
 

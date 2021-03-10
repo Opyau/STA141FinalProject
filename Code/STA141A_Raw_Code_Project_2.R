@@ -1,10 +1,12 @@
 
+library(ggplot2)
+
+inner_data = read.csv("Data/final_data_quarter_inner_join3.csv")
 
 
-inner_data = read.csv("/Users/willkhouri/STA_Analysis/STA141FinalProject/Data/final_data_quarter_inner_join.csv")
 
 #Final model to share with group
-model11 = lm(inner_data2$`%unem (TOTAL)` ~ inner_data2$New_cases_pc + inner_data2$Country, inner_data2)
+model11 = lm(inner_data2$`X.unem..TOTAL.` ~ inner_data2$New_cases_pc + inner_data2$Country, inner_data2)
 model11$coefficients 
 summary(model11)
 confint(model11) 
@@ -34,9 +36,10 @@ ggplot(data= inner_data, mapping = aes(x = inner_data$Cumulative_cases_pc, y = i
 
 
 #Model Testing Section 
-
+inner_data2 = inner_data
 #create a moving average based on who data for daily and GDP data to compare change over time.
 
+head(inner_data2)
 model1 = lm(inner_data2$GDP ~ inner_data2$New_cases_pc + inner_data2$Country, inner_data2)
 model1$coefficients
 
