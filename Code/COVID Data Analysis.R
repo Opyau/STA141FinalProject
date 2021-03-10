@@ -164,14 +164,13 @@ figure13 = gdpsummary %>%
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 
-figure13
-
 figure14 = gdpsummary %>%
   ggplot(aes(x=as.Date(Date_reported), y = X.GDP..QTR., by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 
-figure14
+ggarrange(figure13, figure14)
+
 
 unempsummary = data %>% select(Country, Date_reported, Unemployment, X.unem..QTR.)
 
@@ -181,11 +180,10 @@ figure15 = unempsummary %>%
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 
-figure15
-
 figure16 = unempsummary %>%
   ggplot(aes(x=as.Date(Date_reported), y = X.unem..QTR., by=Country)) +
   geom_line(aes(color=Country)) +
   theme(legend.position ='none')
 
-figure16
+ggarrange(figure15, figure16)
+
